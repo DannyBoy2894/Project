@@ -1,0 +1,98 @@
+#include <math.h>
+#include <string.h>
+#include <stdio.h>
+
+// Declare function so the program can expect one to be called.
+int functionEncrypt (int m, int k);
+int functionDecrypt (int c, int k);
+
+int main()
+{
+    FILE (const char *inputFile, const char *outputFile); // these are pointers to the files you will be reading from and writing to.
+    int m, i, c, k, err, input;
+    
+    char inMessage [100];
+    char outMessage [100];
+    
+    m = 0;
+    i = 0;
+    c = 0;
+    k = 0;
+    
+    char alphaB[27] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+    
+    // open an input file
+    err = fopen("Input.dat", "r"); // this open the file specifically for reading (note "r").
+    if (err == 0) // checking for errors
+    {
+        printf("The file Input.dat was opened\n");
+    }
+    else
+    {
+        printf("the file Input.dat could not open\n");
+    }
+    
+    // open and output file
+    err = fopen("Output.dat", "w");
+    if (err == 0)
+    {
+        printf("The file Output.dat was opened\n");
+    }
+    else
+    {
+        printf("The file Output.dat was not opened\n");
+    }
+    
+    while (!feof (&inputFile)) // !=not, feof=end of file, essentially saying read until the end of the file.
+    {
+        fscanf(inputFile, "%d", &k); // here you have read the input file
+        printf("The message read from the input file is as follows;\n\n");
+        fgets(inMessage, 100, inputFile); // fscanf_s doesnt like spaces so we use fgets here instead.
+        printf("%s\n", inMessage); // printing to the serial monitor the message it read.
+        printf("%d\n\n", k);
+        printf("If this message needs to be Encrypted, type '1'\nOtherwise if the message needs to be Decrypted, type '2'.\n");
+        scanf("%d", &input);
+        
+        if(input == 1)
+        {
+            i = 0;
+            m = inMessage[i];
+            outMessage[i] = functionEncrypt (m, k);
+            get(outMessage, 100);
+            printf("%s\n", outMessage);
+            i++;
+        }
+        else if(input == 2)
+        {
+            c = inMessage[i];
+            outMessage[i] = functionDecrypt (c, k);
+            get(outMessage, 100);
+            printf("%s\n", outMessage);
+            i++;
+        }
+        else if(input != 1 || 2)
+        {
+            printf("Input does not accept.\n");
+        }
+    }
+    
+    // closing all open files
+    int numclosed = _fcloseall();
+    printf("Number of files closed by _fcloseall: %u\n",numclosed);
+    
+    return 0;
+}
+
+int functionEncrypt(int m, int k) // function to encrypt message
+{
+    int e;
+    e = (m + k) % 26;
+    return e;
+}
+
+int functionDecrypt(int c, int k) // function the decrypt message
+{
+    int d;
+    d = (c - k) % 26;
+    return d;
+}
